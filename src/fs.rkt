@@ -1,5 +1,4 @@
 #lang racket
-
 (provide (all-defined-out))
 
 (define (file->metadata file) (car file))
@@ -83,6 +82,9 @@
 
 (define (context->root cntx)
   (car cntx))
+
+(define (context->move cntx file)
+  (cons (context->root cntx) file))
 
 (define (context->cur cntx)
   (cdr cntx))
