@@ -1,6 +1,10 @@
 #lang racket
-(require "fs.rkt")
-(require "term.rkt")
+
+(require "core/fs.rkt")
+(require "core/explorer.rkt")
+(require "core/term.rkt")
+(require "core/env.rkt")
+(require "core/program.rkt")
 
 (define fs (file->root))
 (define f1 (file->regular fs "f1" "data"))
@@ -11,10 +15,8 @@
 (define d5 (file->directory d2 "5"))
 (define f2 (file->regular d5 "f2" "lala"))
 
-(file->content (explorer->find (cons fs d2) "/1/2/5/f2"))
+(file->content (explorer->find (cons fs d1) ".///////./../1/2/5/..//./../2/5/f2"))
 
 (define env (env->create))
 (define test-program (lambda () (display "test")))
 (env->add env (program->create "test" test-program))
-
-env

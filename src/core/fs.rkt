@@ -75,35 +75,3 @@
 
 (define (file->sub-directory directory) (file->sub directory file->directory?))
 (define (file->sub-regular directory) (file->sub directory file->regular?))
-
-;(fs-root ; current)
-(define (context->create fs)
-  (cons fs fs))
-
-(define (context->root cntx)
-  (car cntx))
-
-(define (context->move cntx file)
-  (cons (context->root cntx) file))
-
-(define (context->cur cntx)
-  (cdr cntx))
-
-(define (explorer->path-resolver path)
-  (string-split path "/"))
-
-(define (explorer->root-path? path)
-  (string-prefix? path "/"))
-
-(define (explorer->find context path)
-  (define managed-path (explorer->path-resolver path))
-  (define (helper cur mp)
-    (if (null? mp) cur
-      (if (not (file->directory? cur)) 
-	'()
-	(helper (file->dir-get cur (car mp)) (cdr mp)))))
-  (if (explorer->root-path? path)
-    (helper (context->root context) managed-path)
-    (helper (context->cur context) managed-path)))
-
-
