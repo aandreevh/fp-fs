@@ -2,9 +2,10 @@
 (provide (all-defined-out))
 (require "fs.rkt")
 
+
 ;(fs-root ; current)
-(define (context->create fs)
-  (cons fs fs))
+(define (context->create fs (cur fs))
+  (cons fs cur))
 
 (define (context->root cntx)
   (car cntx))
@@ -22,6 +23,7 @@
   (string-prefix? path "/"))
 
 (define (explorer->find context path)
+
   
 (define managed-path (explorer->path-resolver path))
 
@@ -38,3 +40,9 @@
     (helper (context->cur context) managed-path)))
 
 
+(define (explorer->path context) 
+  (if (eq? (context->root context) (context->cur context))
+  (file->name (context->root context))
+  (string-append (explorer->path (context->create (context->root context) (file->parent (context->cur context))   )) "/" (file->name (context->cur context)) )
+  )
+)

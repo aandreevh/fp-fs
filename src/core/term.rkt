@@ -2,6 +2,7 @@
 
 (provide (all-defined-out))
 
+(require "../core/program.rkt")
 (require "env.rkt")
 (require "fs.rkt")
 
@@ -14,6 +15,6 @@
 (define (term->bind term program)
   (env->add (term->env term) program))
 
-(define (term->invoke term name . args)
-  (apply (env->get name) term args))
+(define (term->invoke term name  (args  '()))
+  (apply (program->func (env->get (term->env term) name)) term args))
 
