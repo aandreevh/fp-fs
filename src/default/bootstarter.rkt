@@ -9,5 +9,8 @@
 
 (define (bootstart)
 (define def-term (term->create (context->create (file->root)) def-env ))
-(term->invoke def-term "main")
+(begin
+   (display "Hello!\n")
+   (term->invoke def-term "main")
+   (display "Bye!\n"))
 )

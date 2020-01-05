@@ -13,5 +13,7 @@
 (env->add  def-env p_touch)
 (env->add  def-env p_mkdir)
 (env->add  def-env p_ls)
+(env->add def-env p_rm)
+(env->add def-env p_cat)
 def-env
 )))

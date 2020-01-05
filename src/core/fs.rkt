@@ -16,7 +16,7 @@
 
 (define (file->check? op)
   (lambda (file [deep #f]) 
-    (and (file? file deep) (op (file->content file)))))
+    (and (not (null? file)) (file? file deep) (op (file->content file)))))
 
 (define file->regular? (file->check? string?))
 (define file->directory? (file->check? hash?))

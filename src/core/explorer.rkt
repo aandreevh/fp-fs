@@ -16,20 +16,33 @@
 (define (context->cur cntx)
   (cdr cntx))
 
+
+
 (define (explorer->path-resolver path)
   (string-split path "/"))
 
 (define (explorer->root-path? path)
   (string-prefix? path "/"))
 
+(define (explorer->basename path)
+ (define pths (explorer->path-resolver path))
+ (if (null? pths) "" (last pths)) 
+)
+
+(define (explorer->basedir path)
+ (if (string-contains? path "/")
+ (string-replace path #rx"/[^/]*$" "/")
+ ""
+ )
+)
+
 (define (explorer->find context path)
 
-  
-(define managed-path (explorer->path-resolver path))
+  (define managed-path (explorer->path-resolver path))
 
-  (define (helper cur mp)
+    (define (helper cur mp)
       (cond 
-      ((null? mp) cur)
+      ((or (null? mp) (null? cur)) cur)
       ((equal? (car mp) "..") (helper (file->parent cur) (cdr mp)))
       ((or (equal? (car mp) ".") (equal? (car mp) "")) (helper cur (cdr mp)))
       ((not (file->directory? cur)) '())
@@ -41,8 +54,13 @@
 
 
 (define (explorer->path context) 
-  (if (eq? (context->root context) (context->cur context))
-  (file->name (context->root context))
-  (string-append (explorer->path (context->create (context->root context) (file->parent (context->cur context))   )) "/" (file->name (context->cur context)) )
-  )
-)
+  (if (eq? (context->root context) 
+           (context->cur context))
+    (file->name (context->root context))
+    (string-append (explorer->path 
+                       (context->create 
+                          (context->root context) 
+                          (file->parent 
+                            (context->cur context)))) 
+                            "/" 
+                            (file->name (context->cur context)) )))
