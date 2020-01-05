@@ -17,4 +17,3 @@
 
 (define (term->invoke term name  (args  '()))
   (apply (program->func (env->get (term->env term) name)) term args))
-

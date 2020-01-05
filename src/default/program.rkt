@@ -32,11 +32,11 @@
 
 
 
-(define p_exit (program->create "exit" (lambda (term)
+(define p_exit (program->create "exit" (lambda (term . args)
 #f
 )))
 
-(define p_pwd (program->create "pwd" (lambda (term)
+(define p_pwd (program->create "pwd" (lambda (term . args)
 (begin
     (define pth (explorer->path (term->context term)))
     (if (equal? pth "")
@@ -57,7 +57,7 @@
        (if (null? fd)
          (display "File not found!\n")
            (if (not (file->directory? fd))
-             (display "Directory not a directory!\n")
+             (display "File not a directory!\n")
              (begin
                  (set! nterm ( term->create (context->move (term->context term) fd) (term->env term) ))
                  (display "Moved to ")
