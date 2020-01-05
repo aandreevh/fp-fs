@@ -25,7 +25,7 @@
         term
       ))
   (begin
-    (display "Invalid command! For more information type command: help.\n")
+    (display "Invalid command!\n")
     (term->invoke term "main"))
   
   )))))
@@ -39,7 +39,7 @@
 (define p_pwd (program->create "pwd" (lambda (term)
 (begin
     (define pth (explorer->path (term->context term)))
-    (if (eqv? pth "")
+    (if (equal? pth "")
      (display "/")
      (display pth)
      )
@@ -150,22 +150,39 @@
 ))))
 
 (define p_cat (program->create "cat" (lambda (term . args)
-(define files_read (takef args (lambda (x) (not (equal? x ">"))) ))
-(define files_write (cdr (dropf args (lambda (x) (not (equal? x ">"))))))
- 
+(define files_read  (filter (lambda (x) (not (equal? x ">"))) (takef args (lambda (x) (not (equal? x ">"))) )))
+(define files_write (filter (lambda (x) (not (equal? x ">"))) (dropf args (lambda (x) (not (equal? x ">"))))))
+
 (define (read-helper)
 (define ln (read-line))
   (if (equal? ln ".")
     ""
     (string-append ln "\n" (read-helper))))
+
+(define (file-helper files)
+    (foldl (lambda (fl tot)
+              (define f (explorer->find (term->context term) fl ))
+              (if (file->regular? f)
+                (string-append tot (file->content f))
+                tot
+              )) "" files))
  
 (define in (if (null? files_read) 
                (string-replace 
                  (read-helper) #rx"\n$" "") 
-                 (void)))
+                 (file-helper files_read)))
   (begin
   (if (null? files_write)
-  (display in)
-  (void)
-  )
+    (begin
+    (display in)
+    (display "\n")
+    )
+    (map (lambda (ffl)
+    (if (explorer->find-or-create 
+        (term->context term) ffl in )
+    (void)
+    (begin
+    (display "Could not write to file: ")
+    (display (explorer->basename ffl))
+    (display "!\n")))) files_write))
   term))))

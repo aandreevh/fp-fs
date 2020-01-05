@@ -35,7 +35,6 @@
  ""
  )
 )
-
 (define (explorer->find context path)
 
   (define managed-path (explorer->path-resolver path))
@@ -64,3 +63,22 @@
                             (context->cur context)))) 
                             "/" 
                             (file->name (context->cur context)) )))
+
+(define (explorer->find-or-create context fpath data)
+  (define found (explorer->find context fpath))
+  (define name (explorer->basename fpath))
+  (define dir (explorer->find context (explorer->basedir fpath)))
+  
+  (if (null? found)
+    (if (or (null? dir) (file->regular? dir))
+      #f
+     (begin
+     (file->regular dir name data)
+     #t
+     )
+     )
+    (if (file->regular found)
+      (begin
+        (string-set! (file->content found) data)
+        #t)
+    #f)))
